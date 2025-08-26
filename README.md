@@ -1,5 +1,7 @@
 # Project goals
-The aims to briefly explore options of creating end-to-end type safety between backend APIs and frontend clients by relying on automatic type generation since manually describing requests/responses/errors is not sustainable.
+The aims is to briefly explore options of creating end-to-end type safety between backend REST APIs and frontend clients by relying on automatic type generation since manually describing requests/responses/errors is not sustainable.
+
+GraphQL has similar tools for generating types but it's not the focus of this experiment.
 
 #### Progress report
 The current solution is not 100% automatic but covers all major painpoints:
