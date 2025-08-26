@@ -3,7 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ApiMapi.Controllers
 {
-
+    // If multiple request payloads result in the same error class make it more general as multiple ProducesResponseType returning
+    // the same status code overwrite each other in swagger
     public class MarsTemperatureErrorResponse
     {
         public string Error { get; set; } = "Temperature data unavailable for Mars";
@@ -11,35 +12,34 @@ namespace ApiMapi.Controllers
         public string Details { get; set; } = "Mars temperature readings are currently offline";
     }
 
-    // For other error types you might have
     public class NoReadingsErrorResponse
     {
         public string Error { get; set; } = "No readings are available at the moment";
         public string Code { get; set; } = "NO_READINGS_ERROR";
     }
 
+    public class FileMissingErrorResponse
+    {
+        public string Error { get; set; } = "No file attached";
+        public string Code { get; set; } = "NO_FILE_ATTACHED";
+    }
+
     [ApiController]
-    [Route("[controller]")]
+    [Route("weather-forecast")]
     public class WeatherForecastController : ControllerBase
     {
+        private readonly ILogger<WeatherForecastController> _logger;
         private static readonly string[] Summaries = new[]
         {
             "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
         };
 
-        private readonly ILogger<WeatherForecastController> _logger;
 
         public WeatherForecastController(ILogger<WeatherForecastController> logger)
         {
             _logger = logger;
         }
 
-
-        /// <summary>
-        /// Create a weatherforecast entry
-        /// </summary>
-        /// <returns></returns>
-        /// <exception cref="NoReadingsErrorResponse">can throw an exception of kurami</exception>
         [HttpPost]
         [ProducesResponseType(typeof(WeatherForecast), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(NoReadingsErrorResponse), StatusCodes.Status400BadRequest)]
@@ -59,17 +59,10 @@ namespace ApiMapi.Controllers
             });
         }
 
-
-        /// <summary>
-        /// My get endpoint
-        /// </summary>
-        /// <param name="tenant"></param>
-        /// <returns></returns>
-        /// <exception cref="MarsTemperatureErrorResponse">can throw an exception for temps on mars</exception>
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<WeatherForecast>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(MarsTemperatureErrorResponse), StatusCodes.Status400BadRequest)]
-        public IActionResult Get([FromHeader] string? planet)
+        public IActionResult GetAllForecasts([FromHeader] string? planet)
         {
             if (planet == "mars")
             {
@@ -82,6 +75,19 @@ namespace ApiMapi.Controllers
                 TemperatureC = Random.Shared.Next(-20, 55),
                 Summary = Summaries[Random.Shared.Next(Summaries.Length)]
             }).ToArray());
+        }
+
+        [HttpPost("upload-planet-weather-map")]
+        [ProducesResponseType(typeof(string), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(FileMissingErrorResponse), StatusCodes.Status400BadRequest)]
+        public IActionResult UploadMap(IFormFile? planetWeatherMap)
+        {
+            if (planetWeatherMap == null)
+            {
+                return BadRequest(new FileMissingErrorResponse());
+            }
+
+            return Ok("Planet weather map uploaded successfully");
         }
     }
 }
