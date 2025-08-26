@@ -8,7 +8,7 @@
     "dev": "vite",
     "build": "vite build",
     "serve": "vite preview",
-    "generate-types": "openapi-typescript http://localhost:5000/swagger/v1/swagger.json -o ./src/types/api.ts"
+    "generate:types": "openapi-typescript http://localhost:5000/swagger/v1/swagger.json -o ./src/types/api.ts"
   },
   "license": "MIT",
   "devDependencies": {
