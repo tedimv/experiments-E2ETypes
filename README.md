@@ -21,7 +21,7 @@ The current solution is not 100% automatic but covers all major painpoints:
 ### Monolith backend
 The first test attemps to solve the problem for monolithic backends since schema discovery would be simpler
 
-**API Project: Api**
+**API Project: Api** <br/>
 **Client project: clients/web**
 
 ### Conclusions
